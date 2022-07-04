@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
+    'app_auth.apps.AppAuthConfig',
+    'app.apps.AppConfig',
+    'account.apps.AccountConfig',
+    'area_parser.apps.AreaParserConfig',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +59,7 @@ ROOT_URLCONF = 'square.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [BASE_DIR / 'app_data/templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -63,7 +68,12 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # current app processors (square)
+                'square.template_context_processors.app_common_context_processor'
             ],
+            'libraries': {
+                'ext_filters': 'square.templatetags.ext_filters'
+            },
         },
     },
 ]
@@ -78,8 +88,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'area_parser': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'test-area',
+        'USER': 'postgres',
+        'PASSWORD': 'qwerty123',
+        'HOST': 'localhost'
     }
 }
+
+DATABASE_ROUTERS = ['area_parser.router.AreaParserRouter']
 
 
 # Password validation
@@ -104,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
 
@@ -119,18 +138,21 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static"
+    BASE_DIR / "app_data/static"
 ]
 
 # Auth settings
 
-LOGIN_URL = 'auth/login/'
+LOGIN_URL = '/auth/login/'
 
-LOGIN_REDIRECT_URL = 'app/'
+LOGIN_REDIRECT_URL = '/app/'
 
-LOGOUT_REDIRECT_URL = 'auth/login/'
+LOGOUT_REDIRECT_URL = '/auth/login/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# e-mail settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

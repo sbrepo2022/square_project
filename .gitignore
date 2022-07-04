@@ -141,3 +141,6 @@ cython_debug/
 # pycharm
 .idea/
 
+# Project gitignore
+app_data/frontend/node_modules/*
+app_data/static/**/bundles/*
